@@ -26,14 +26,15 @@ for (let type of types) {
 }
 
 const maxRetryingCount = 3;
+const queue = [];
+
+let retrying = false;
+
 const service = axios.create({
     baseURL: "http://localhost:8888/",
     timeout: 5000,
     retryingCount: maxRetryingCount
 });
-
-let retrying = false;
-const queue = [];
 
 function release(ok) {
     if (queue.length) {

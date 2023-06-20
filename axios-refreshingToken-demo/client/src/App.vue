@@ -7,10 +7,10 @@
             <el-form ref="form" label-width="140px">
                 <el-form-item label="-- 注意事项 --">
                     <div style="font-size: 14px;">
-                        <span>1、刷新token时，若refreshToken没有过期，则不会返回，但登陆时，会颁发新的令牌；</span>
+                        <span>1、刷新token时，若refreshToken没有过期，则不会返回，但登陆时，会颁发新的双令牌；</span>
                         <span>2、清除token指的是前后端一起清除；</span>
                         <span>3、可以点击《只清除accessToken》后，使用《获取数据》接口测试刷新令牌效果；</span>
-                        <span>4、可以通过在服务端打断点，不响应请求的方式体验重发请求的效果；</span>
+                        <span>4、可以通过在服务端打断点，不响应请求的方式测试重发请求的效果；</span>
                         <span>5、可以在清除accessToken后，点击《并发获取数据》来测试axios重发时产生的请求队列效果【接口都推荐结合浏览器network选项查看】。</span>
                     </div>
                 </el-form-item>
@@ -124,7 +124,7 @@ export default {
                 this.testData = JSON.stringify(resp.data);
             }
         },
-        // 只是前端丢弃，偷懒了【其实token还是可以用的】
+        // 只是前端丢弃【其实token还是可以用的】
         clearAccessToken() {
             this.token.accessToken = "";
             window.localStorage.setItem("accessToken", "");
