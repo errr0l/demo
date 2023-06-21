@@ -130,15 +130,30 @@ app.use(function(err, req, resp, next) {
 });
 
 app.get("/api/test", (req, resp) => {
-    resp.send({
-        code: 0,
-        message: "ok!",
-        data: {
-            name: "测试数据",
-            value: 114514,
-            date: new Date().getTime()
-        }
-    });
+    if (req.query.delay) {
+        setTimeout(() => {
+            resp.send({
+                code: 0,
+                message: "ok!",
+                data: {
+                    name: "测试数据",
+                    value: 114514,
+                    date: new Date().getTime()
+                }
+            });
+        }, req.query.delay * 1000);
+    }
+    else {
+        resp.send({
+            code: 0,
+            message: "ok!",
+            data: {
+                name: "测试数据",
+                value: 114514,
+                date: new Date().getTime()
+            }
+        });
+    }
 });
 
 // 登陆接口

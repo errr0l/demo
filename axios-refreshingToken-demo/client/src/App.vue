@@ -30,6 +30,7 @@
                     <el-button type="primary" size="mini" @click="login">登陆</el-button>
                     <el-button type="primary" size="mini" @click="getTestData">获取数据</el-button>
                     <el-button type="primary" size="mini" @click="getTestDataWithConcurrency">并发获取数据</el-button>
+                    <el-button type="primary" size="mini" @click="popup">模拟延迟获取数据</el-button>
                     <el-button type="primary" size="mini" @click="refresh">刷新token</el-button>
                     <el-button type="primary" size="mini" @click="logout">清除token</el-button>
                     <el-button type="primary" size="mini" @click="clearAccessToken">只清除accessToken</el-button>
@@ -41,6 +42,7 @@
 
 <script>
 import { login, logout, refresh, getTestData } from "@/api/index.js";
+import request from '@/util/request';
 import bus from "@/util/bus.js";
 
 export default {
@@ -139,15 +141,39 @@ export default {
                 this.testData = str;
                 this.$message.success("操作成功");
             });
+        },
+        async popup() {
+            this.$confirm('请选择一个预定的请求结果', '提示', {
+                confirmButtonText: '成功请求',
+                cancelButtonText: '失败请求'
+            }).then(() => {
+                this.getTestDataWithDelay(5);
+            }).catch(() => {
+                this.getTestDataWithDelay(20);        
+            });
+        },
+        async getTestDataWithDelay(delay) {
+            this.$message.success("请求已发送，请在浏览器控制台和network查看效果");
+            const resp = await request({
+                url: '/api/test',
+                method: 'get',
+                params: {
+                    delay, // 如果需要测试请求失败的效果，只需把delay参数调大即可
+                },
+                configHandler: function() {
+                    this.params.delay--;
+                }
+            });
+            if (resp.code === 0) {
+                this.$message.success("操作成功");
+                this.testData = JSON.stringify(resp.data);
+            }
         }
     }
 };
 </script>
 
 <style lang="styl" scoped>
-#app {
-    color: pink;
-}
 .container {
     width: 1024px;
     margin: 30px auto 0;
