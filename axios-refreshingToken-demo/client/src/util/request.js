@@ -59,14 +59,15 @@ async function respHandler(resp) {
     const data = resp.data;
     switch (data.code) {
         case 0:
+            if (resp.config.errorHappened) {
+                console.warn('错误处理成功.');
+            }
             return data;
         // 未登录或accessToken过期
         case 40101:
             const refreshToken = window.localStorage.getItem("refreshToken");
             if (!refreshToken) {
-                return MessageBox("请先登录", "提示", {
-                    confirmButtonText: '确定'
-                }).then(() => {});
+                return MessageBox("请先登录", "提示", { confirmButtonText: '确定' }).then(() => {});
             }
             if (!retrying) {
                 retrying = true;
@@ -128,10 +129,13 @@ service.interceptors.request.use(
 
 // 设置响应拦截器
 service.interceptors.response.use(
-    async response => {
+    response => {
         return respHandler(response) || {};
     },
     error => {
+        console.error('请求过程中发生错误：', error);
+        console.log('尝试处理错误中...');
+        error.config.errorHappened = true; // error.config和error.response.config是同一个对象
         if (error.response) {
             return respHandler(error.response);
         }
@@ -142,6 +146,9 @@ service.interceptors.response.use(
                 error.config.retryingCount--;
                 let current = Math.abs(error.config.retryingCount - maxRetryingCount);
                 console.error("第" + current + "次重发中...");
+                if (error.config.configHandler && typeof error.config.configHandler === 'function') {
+                    error.config.configHandler();
+                }
                 return service(error.config);
             }
             console.error("[" + error.config.url + "] 请求失败，总次数为：" + maxRetryingCount);
@@ -149,6 +156,8 @@ service.interceptors.response.use(
         }
 
         _Message.error(error.message || "系统发生异常");
+
+        console.error('错误处理失败.');
         return Promise.reject(error);
     }
 );

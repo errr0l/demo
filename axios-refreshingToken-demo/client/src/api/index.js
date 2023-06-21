@@ -23,9 +23,10 @@ export function logout() {
     });
 }
 
-export function getTestData() {
+export function getTestData(data) {
     return request({
         url: '/api/test',
-        method: 'get'
+        method: 'get',
+        params: data
     });
 }
