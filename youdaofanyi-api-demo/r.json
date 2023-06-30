@@ -1,0 +1,21 @@
+{
+    "tSpeakUrl": "https://openapi.youdao.com/ttsapi?q=%E9%AD%85%E9%AD%94%E5%AD%A6%E6%A0%A1%E7%9A%84%E8%AF%BE%E7%A8%8B%E9%83%BD%E6%95%99%E4%BA%9B%E4%BB%80%E4%B9%88%3F&langType=zh-CHS&sign=F99D48FE41FA75920EA54D2094378DEA&salt=1687738796402&voice=4&format=mp3&appKey=5454833ef4da3520&ttsVoiceStrict=false&osType=api",
+    "requestId": "fb35d6eb-36ff-4f6c-8403-8b8da5b2c37b",
+    "query": "What is taught in succubus school classes?",
+    "translation": [
+        "魅魔学校的课程都教些什么?"
+    ],
+    "mTerminalDict": {
+        "url": "https://m.youdao.com/m/result?lang=en&word=What+is+taught+in+succubus+school+classes%3F"
+    },
+    "errorCode": "0",
+    "dict": {
+        "url": "yddict://m.youdao.com/dict?le=eng&q=What+is+taught+in+succubus+school+classes%3F"
+    },
+    "webdict": {
+        "url": "http://mobile.youdao.com/dict?le=eng&q=What+is+taught+in+succubus+school+classes%3F"
+    },
+    "l": "en2zh-CHS",
+    "isWord": false,
+    "speakUrl": "https://openapi.youdao.com/ttsapi?q=What+is+taught+in+succubus+school+classes%3F&langType=en-USA&sign=8FF3BD3DF0C797E21EB4B10F14C2B63E&salt=1687738796402&voice=4&format=mp3&appKey=5454833ef4da3520&ttsVoiceStrict=false&osType=api"
+}

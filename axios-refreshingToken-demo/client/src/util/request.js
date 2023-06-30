@@ -59,9 +59,6 @@ async function respHandler(resp) {
     const data = resp.data;
     switch (data.code) {
         case 0:
-            if (resp.config.errorHappened) {
-                console.warn('错误处理成功.');
-            }
             return data;
         // 未登录或accessToken过期
         case 40101:
@@ -115,6 +112,7 @@ async function respHandler(resp) {
         default:
             _Message.error(data.message || "系统发生异常");
     }
+    release(false);
     return data;
 }
 
@@ -134,8 +132,6 @@ service.interceptors.response.use(
     },
     error => {
         console.error('请求过程中发生错误：', error);
-        console.log('尝试处理错误中...');
-        error.config.errorHappened = true; // error.config和error.response.config是同一个对象
         if (error.response) {
             return respHandler(error.response);
         }
@@ -145,7 +141,7 @@ service.interceptors.response.use(
             if (error.config.retryingCount > 0) {
                 error.config.retryingCount--;
                 let current = Math.abs(error.config.retryingCount - maxRetryingCount);
-                console.error("第" + current + "次重发中...");
+                console.warn("第" + current + "次重发中...");
                 if (error.config.configHandler && typeof error.config.configHandler === 'function') {
                     error.config.configHandler();
                 }
