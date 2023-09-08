@@ -33,7 +33,8 @@ let retrying = false;
 const service = axios.create({
     baseURL: "http://localhost:8888/",
     timeout: 5000,
-    retryingCount: maxRetryingCount
+    retryingCount: maxRetryingCount,
+    enableRetrying: true // 是否启用重试
 });
 
 function release(ok) {
@@ -49,6 +50,9 @@ function release(ok) {
 // token拦截器
 export const tokenInterceptor = config => {
     const accessToken = window.localStorage.getItem("accessToken");
+
+    console.log('the config before requesting');
+    console.log(config);
     if (accessToken) {
         config.headers["Authorization"] = `Bearer ${accessToken}`;
     }
@@ -132,12 +136,13 @@ service.interceptors.response.use(
     },
     error => {
         console.error('请求过程中发生错误：', error);
+        // 如果有相应，就交给respHandler函数处理
         if (error.response) {
             return respHandler(error.response);
         }
 
         // 可以拓展更多的需要重发请求的情况
-        if (error.code === 'ECONNABORTED' || error.message.includes('timeout of')) {
+        if (error.config.enableRetrying && (error.code === 'ECONNABORTED' || error.message.includes('timeout of'))) {
             if (error.config.retryingCount > 0) {
                 error.config.retryingCount--;
                 let current = Math.abs(error.config.retryingCount - maxRetryingCount);

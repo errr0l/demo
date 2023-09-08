@@ -12,7 +12,8 @@ export function login(data) {
     return request({
         url: '/api/login',
         method: 'post',
-        data
+        data,
+        test: '123'
     });
 }
 

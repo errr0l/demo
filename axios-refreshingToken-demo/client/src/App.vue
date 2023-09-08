@@ -162,7 +162,8 @@ export default {
                 },
                 configHandler: function() {
                     this.params.delay--;
-                }
+                },
+                // enableRetrying: false
             });
             if (resp.code === 0) {
                 this.$message.success("操作成功");
