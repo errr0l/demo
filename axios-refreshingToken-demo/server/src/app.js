@@ -136,7 +136,7 @@ app.get("/api/test", (req, resp) => {
                 code: 0,
                 message: "ok!",
                 data: {
-                    name: "测试数据",
+                    name: "/api/test接口测试数据",
                     value: 114514,
                     date: new Date().getTime()
                 }
@@ -154,6 +154,18 @@ app.get("/api/test", (req, resp) => {
             }
         });
     }
+});
+
+app.get("/api/test2", (req, resp) => {
+    resp.send({
+        code: 0,
+        message: "ok!",
+        data: {
+            name: "/api/test2接口测试数据",
+            value: 114514,
+            date: new Date().getTime()
+        }
+    });
 });
 
 // 登陆接口

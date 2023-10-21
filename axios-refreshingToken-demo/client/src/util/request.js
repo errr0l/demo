@@ -47,14 +47,46 @@ function release(ok) {
     }
 }
 
+/**
+ * 通知方法
+ * @param {Number} type - 通知类型；1=gotoLoginPage，2=Message.error
+ * @param {Object} resp - 响应对象
+ * @returns 
+ */
+ const notice = (type, resp) => {
+    if (resp.config && resp.config.silence) {
+        return;
+    }
+
+    const data = resp.data;
+    // 目前只有两种通知类型
+    if (type == 1) {
+        // gotoLoginPage(data.message, router.app.$route);
+        MessageBox("请先登录", "提示", { confirmButtonText: '确定' }).then(() => {});
+    }
+    else if (type == 2) {
+        Message.error(data.message || "系统发生异常");
+    }
+}
+
 // token拦截器
 export const tokenInterceptor = config => {
     const accessToken = window.localStorage.getItem("accessToken");
-
-    console.log('the config before requesting');
-    console.log(config);
     if (accessToken) {
         config.headers["Authorization"] = `Bearer ${accessToken}`;
+    }
+    return config;
+}
+
+// 静默拦截器；
+// 如果state.silence为true，就把silence移到config；
+// 此处使用localStorage、vuex（vue）作为代替也是可以的；
+const silenceInterceptor = config => {
+    if (!config.silence) {
+        const silence = sessionStorage.getItem('silence');
+        if (silence == 'true') {
+            config.silence = true;
+        }
     }
     return config;
 }
@@ -68,7 +100,10 @@ async function respHandler(resp) {
         case 40101:
             const refreshToken = window.localStorage.getItem("refreshToken");
             if (!refreshToken) {
-                return MessageBox("请先登录", "提示", { confirmButtonText: '确定' }).then(() => {});
+                //MessageBox("请先登录", "提示", { confirmButtonText: '确定' }).then(() => {});
+                notice(1, resp);
+                // 修改为break，否则可能导致queue中的请求不会释放的问题
+                break;
             }
             if (!retrying) {
                 retrying = true;
@@ -86,6 +121,8 @@ async function respHandler(resp) {
                     release(true);
                     return service(resp.config);
                 } catch (error) {
+                    // 如果刷新过程中出现错误的话，就直接返回，后续不在发起请求
+                    // 捕获到的error有两种可能：1）refresh请求时发生的异常；2）上面抛出的Error
                     console.error("刷新请求出现错误：", error);
                     window.localStorage.setItem("accessToken", "");
                     bus.$emit('clear:token', { accessToken: true });
@@ -93,7 +130,7 @@ async function respHandler(resp) {
                     retrying = false;
                 }
             }
-            // 在并发请求的情况下，将后续的请求加入队列
+            // 在多个连续请求的情况下，将请求加入队列
             else {
                 return new Promise((resolve, reject) => {
                     queue.push((ok) => {
@@ -111,10 +148,12 @@ async function respHandler(resp) {
         case 40198:
             window.localStorage.setItem("refreshToken", "");
             bus.$emit('clear:token', { refreshToken: true });
-            _Message.error(data.message || "请重新登陆");
+            // _Message.error(data.message || "请重新登陆");
+            notice(1, resp);
             break;
         default:
-            _Message.error(data.message || "系统发生异常");
+           //  _Message.error(data.message || "系统发生异常");
+           notice(2, resp);
     }
     release(false);
     return data;
@@ -128,6 +167,8 @@ service.interceptors.request.use(
         return Promise.reject(error);
     }
 );
+
+service.interceptors.request.use(silenceInterceptor);
 
 // 设置响应拦截器
 service.interceptors.response.use(

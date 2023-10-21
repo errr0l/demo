@@ -28,6 +28,16 @@ export function getTestData(data) {
     return request({
         url: '/api/test',
         method: 'get',
-        params: data
+        params: data,
+        enableRetrying: false
+    });
+}
+
+export function getTestData2(data) {
+    return request({
+        url: '/api/test2',
+        method: 'get',
+        params: data,
+        silence: true
     });
 }

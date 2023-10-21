@@ -34,6 +34,8 @@
                     <el-button type="primary" size="mini" @click="refresh">刷新token</el-button>
                     <el-button type="primary" size="mini" @click="logout">清除token</el-button>
                     <el-button type="primary" size="mini" @click="clearAccessToken">只清除accessToken</el-button>
+                    <el-button type="primary" size="mini" @click="getTestData2">非静默获取数据[查看控制面板]</el-button>
+                    <el-button type="primary" size="mini" @click="getTestData3">静默获取数据[查看控制面板]</el-button>
                 </el-form-item>
             </el-form>
         </el-card>
@@ -44,6 +46,27 @@
 import { login, logout, refresh, getTestData } from "@/api/index.js";
 import request from '@/util/request';
 import bus from "@/util/bus.js";
+
+function wrongTokenWrapper(fn) {
+    return (...args) => {
+        const { accessToken, refreshToken } = this.token;
+        window.localStorage.setItem("accessToken", "123");
+        window.localStorage.setItem("refreshToken", "123");
+        fn.apply(this, args);
+        if (accessToken) {
+            window.localStorage.setItem("accessToken", accessToken);
+        }
+        else {
+            window.localStorage.setItem("accessToken", "");
+        }
+        if (refreshToken) {
+            window.localStorage.setItem("refreshToken", refreshToken);
+        }
+        else {
+            window.localStorage.setItem("refreshToken", "");
+        }
+    }
+}
 
 export default {
     name: "App",
@@ -78,6 +101,9 @@ export default {
                 this.token.refreshToken = refreshToken;
             }
         });
+        wrongTokenWrapper = wrongTokenWrapper.bind(this);
+        this.getTestData2 = wrongTokenWrapper(this.getTestData2);
+        this.getTestData3 = wrongTokenWrapper(this.getTestData3);
     },
     computed: {
         signed() {
@@ -85,6 +111,22 @@ export default {
         }
     },
     methods: {
+        async getTestData2() {
+            const resp = await getTestData();
+            if (resp.code === 0) {
+                this.$message.success("操作成功");
+                this.testData = JSON.stringify(resp.data);
+            }
+        },
+        async getTestData3() {
+            sessionStorage.setItem('silence', true);
+            const resp = await getTestData();
+            if (resp.code === 0) {
+                this.$message.success("操作成功");
+                this.testData = JSON.stringify(resp.data);
+            }
+            sessionStorage.setItem('silence', false);
+        },
         async login() {
             const resp = await login(this.formData);
             if (resp.code === 0) {
