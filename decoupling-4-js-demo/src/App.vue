@@ -25,6 +25,7 @@
             </el-form>
             <div style="text-align: center;">
                 <el-button type="primary" size="mini" @click="register">注册账号</el-button>
+                <el-button type="primary" size="mini" :disabled="btnDisabled" @click="onlyOneClick">只允许一次点击</el-button>
             </div>
         </el-card>
     </div>
@@ -33,6 +34,7 @@
 <script>
 import { applyingInterceptors, emailRule } from "@/util/common";
 import { CustomException } from "@/exception/CustomException";
+import { onlyOneClickInterceptor } from "./interceptor";
 
 const defaultBtnText = '获取验证码';
 const CD = 60; // 一分钟
@@ -116,6 +118,10 @@ const interceptors2 = [{
     }
 }];
 
+const interceptors3 = [
+    onlyOneClickInterceptor,
+];
+
 export default {
     name: "App",
     data() {
@@ -127,13 +133,14 @@ export default {
                 email: "",
                 captcha: ""
             },
-
+            btnDisabled: false,
             btnText: defaultBtnText,
             cd: CD
         };
     },
     created() {
         sendEmailVerifyCode = applyingInterceptors(sendEmailVerifyCode, interceptors2).bind(this);
+        this.onlyOneClick = applyingInterceptors(this.onlyOneClick, interceptors3).bind(this);
     },
     methods: {
         async register() {
@@ -164,6 +171,10 @@ export default {
                     this.$message.error(error.defaultErrorMessage);
                 }
             }
+        },
+        // 如在某些场景下，防止用户多次提交表单
+        onlyOneClick() {
+            window.alert("该按钮只允许点击一次");
         }
     }
 };
