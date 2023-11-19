@@ -86,38 +86,35 @@ const interceptors = [{
 
 register = applyingInterceptors(register, interceptors);
 
-const interceptors2 = [
-    {
-		preHandle({ args, errors }) {
-			const { email } = args[0];
-			if (!email) {
-				errors.push("邮箱不能为空");
-			}
-			else {
-				if (!emailRule.test(email)) {
-					errors.push("邮箱格式不正确");
-				}
-			}
-		}
-	},
-    {
-        group: 2,
-		preHandle({_this }) {
-            if (_this.cd != CD) {
-                return 0;
+const interceptors2 = [{
+    preHandle({ args, errors }) {
+        const { email } = args[0];
+        if (!email) {
+            errors.push("邮箱不能为空");
+        }
+        else {
+            if (!emailRule.test(email)) {
+                errors.push("邮箱格式不正确");
             }
-			let timer = setInterval(() => {
-                _this.cd = _this.cd - 1;
-                _this.btnText = `${_this.cd}秒后重试`;
-                if (_this.cd === 0) {
-                    _this.cd = CD;
-                    _this.btnText = defaultBtnText;
-                    clearInterval(timer);
-                }
-            }, 1000);
-	    }
+        }
     }
-];
+}, {
+    group: 2,
+    preHandle({_this }) {
+        if (_this.cd != CD) {
+            return 0;
+        }
+        let timer = setInterval(() => {
+            _this.cd = _this.cd - 1;
+            _this.btnText = `${_this.cd}秒后重试`;
+            if (_this.cd === 0) {
+                _this.cd = CD;
+                _this.btnText = defaultBtnText;
+                clearInterval(timer);
+            }
+        }, 1000);
+    }
+}];
 
 export default {
     name: "App",
@@ -138,37 +135,37 @@ export default {
     created() {
         sendEmailVerifyCode = applyingInterceptors(sendEmailVerifyCode, interceptors2).bind(this);
     },
-methods: {
-    async register() {
-        try {
-            const resp = await register(this.formData);
-            if (resp && resp.code == 0) {
-                this.$message.success("注册成功");
+    methods: {
+        async register() {
+            try {
+                const resp = await register(this.formData);
+                if (resp && resp.code == 0) {
+                    this.$message.success("注册成功");
+                }
+            } catch (error) {
+                console.log(error);
+                if (error instanceof CustomException) {
+                    this.$message.error(error.defaultErrorMessage);
+                }
             }
-        } catch (error) {
-            console.log(error);
-            if (error instanceof CustomException) {
-                this.$message.error(error.defaultErrorMessage);
-            }
-        }
-    },
-    async sendEmailVerifyCode() {
-        try {
-            const params = {
-                email: this.formData.email
-            };
-            const resp = await sendEmailVerifyCode(params);
-            if (resp && resp.code == 0) {
-                this.$message.success("发送成功");
-            }
-        } catch (error) {
-            console.log(error);
-            if (error instanceof CustomException) {
-                this.$message.error(error.defaultErrorMessage);
+        },
+        async sendEmailVerifyCode() {
+            try {
+                const params = {
+                    email: this.formData.email
+                };
+                const resp = await sendEmailVerifyCode(params);
+                if (resp && resp.code == 0) {
+                    this.$message.success("发送成功");
+                }
+            } catch (error) {
+                console.log(error);
+                if (error instanceof CustomException) {
+                    this.$message.error(error.defaultErrorMessage);
+                }
             }
         }
     }
-}
 };
 </script>
 
