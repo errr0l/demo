@@ -25,7 +25,7 @@ const _run = async (interceptors, args, _this, errors) => {
 }
 
 const _run2 = (interceptors, args, _this) => {
-    for (let i=interceptors.length - 1; i>0; i--) {
+    for (let i = interceptors.length - 1; i > 0; i--) {
         const interceptor = interceptors[i];
         if (!interceptor.isPostHandleFunction) {
             continue;
@@ -57,7 +57,7 @@ const _run3 = (interceptors, args, _this) => {
  * @param {Function} Array[0].group 分组；group=1或不设置分组时，为默认分组，该组会有错误信息产生；group=2为额外分组，该组会接着分组1后执行，但若有错误信息时，则不会执行
  * @returns {Function}
  */
-export const applyingInterceptors = (fn, interceptors=[]) => {
+export const applyingInterceptors = (fn, interceptors = []) => {
     const group1 = [];
     const group2 = [];
     // 对所有的拦截器进行初始化
@@ -72,8 +72,8 @@ export const applyingInterceptors = (fn, interceptors=[]) => {
         interceptor.isPostHandleFunction = typeof interceptor.postHandle == 'function';
         interceptor.isRollbackFunction = typeof interceptor.rollback == 'function';
     }
-    const anonymous = async function(...args) {
-		const errors = [];
+    const anonymous = async function (...args) {
+        const errors = [];
         let _this = this;
         // 执行_run()时，如果返回了0，则表示不再继续往下执行；
         let continued = await _run(group1, args, _this, errors);
@@ -89,7 +89,7 @@ export const applyingInterceptors = (fn, interceptors=[]) => {
             if (continued === 0) {
                 return;
             }
-		    result = await fn.apply(_this, args);
+            result = await fn.apply(_this, args);
             // 如果调用fn()没有出现异常，则调用_run2，即postHandle；
             _run2(group2, args, _this);
             _run2(group1, args, _this);
@@ -100,6 +100,6 @@ export const applyingInterceptors = (fn, interceptors=[]) => {
             _run3(group2, args, _this);
         }
         return result;
-	}
-	return anonymous;
+    }
+    return anonymous;
 }
