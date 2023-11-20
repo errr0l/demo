@@ -50,9 +50,10 @@ const _run3 = (interceptors, args, _this) => {
  * 需要注意的是，如果要读取this的属性，则需要自行绑定this；
  * 此方法会对所有的方法做异步处理；
  * @param {Function} fn 被包装的方法/函数
- * @param {Array.<{preHandle: Function, postHandle: Function, group: Number}>} interceptors - 拦截器数组
+ * @param {Array.<{preHandle: Function, postHandle: Function, rollback: Function, group: Number}>} interceptors - 拦截器数组
  * @param {Function} Array[0].preHandle 前置处理；处理函数可以返回0，表示不再往下执行（不是undefined、false，也不是null和空字符串）
  * @param {Function} Array[0].postHandle 后置处理；
+ * @param {Function} Array[0].rollback 异常处理；
  * @param {Function} Array[0].group 分组；group=1或不设置分组时，为默认分组，该组会有错误信息产生；group=2为额外分组，该组会接着分组1后执行，但若有错误信息时，则不会执行
  * @returns {Function}
  */
@@ -71,7 +72,7 @@ export const applyingInterceptors = (fn, interceptors=[]) => {
         interceptor.isPostHandleFunction = typeof interceptor.postHandle == 'function';
         interceptor.isRollbackFunction = typeof interceptor.rollback == 'function';
     }
-	return async function(...args) {
+    const anonymous = async function(...args) {
 		const errors = [];
         let _this = this;
         // 执行_run()时，如果返回了0，则表示不再继续往下执行；
@@ -79,7 +80,7 @@ export const applyingInterceptors = (fn, interceptors=[]) => {
         if (errors.length) {
             throw new CustomException('执行过程出现错误', errors);
         }
-        let result;
+        let result = null;
         try {
             if (continued === 0) {
                 return;
@@ -100,4 +101,5 @@ export const applyingInterceptors = (fn, interceptors=[]) => {
         }
         return result;
 	}
+	return anonymous;
 }
