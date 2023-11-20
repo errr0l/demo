@@ -25,7 +25,7 @@ const _run = async (interceptors, args, _this, errors) => {
 }
 
 const _run2 = (interceptors, args, _this) => {
-    for (let i = interceptors.length - 1; i > 0; i--) {
+    for (let i = interceptors.length - 1; i >= 0; i--) {
         const interceptor = interceptors[i];
         if (!interceptor.isPostHandleFunction) {
             continue;
