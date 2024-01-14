@@ -22,7 +22,7 @@ public class Application {
         //String fileName = "B6DB1B5FC9250CCA17361FA06F1792B5.jpg";
         //String fileName = "794B224FE1E5AF4B1096767603FD8C89.jpg";
         //String fileName = "383D03BD8824D1EB08DC2D9A15CB433D.jpg";
-        String fileName = "52E090E9063FC3EFA24E3F501990C5B4.jpg";
+        String fileName = "1AA4A09C152DFD50994E2760A21CC1F0.jpg";
 
         File file = new File(basePath + fileName);
         //File file1 = new File("/Users/xieshixin/Desktop/123.png");

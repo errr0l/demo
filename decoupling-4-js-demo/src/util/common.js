@@ -1,4 +1,5 @@
 import { CustomException } from "@/exception/CustomException";
+import { isPassForCommon } from "../interceptor";
 
 export const emailRule = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(.[a-zA-Z0-9_-]+)+$/;
 
@@ -41,6 +42,7 @@ const _run3 = (interceptors, args, _this) => {
         if (!interceptor.isRollbackFunction) {
             continue;
         }
+        console.log(interceptor);
         interceptor.rollback({ args, _this, interceptor });
     }
 }
@@ -51,15 +53,23 @@ const _run3 = (interceptors, args, _this) => {
  * 此方法会对所有的方法做异步处理；
  * @param {Function} fn 被包装的方法/函数
  * @param {Array.<{preHandle: Function, postHandle: Function, rollback: Function, group: Number}>} interceptors - 拦截器数组
+ * @param {Object} options 其他
+ * @param {Function} options.isPass 判断执行结果是否通过
  * @param {Function} Array[0].preHandle 前置处理；处理函数可以返回0，表示不再往下执行（不是undefined、false，也不是null和空字符串）
  * @param {Function} Array[0].postHandle 后置处理；
  * @param {Function} Array[0].rollback 异常处理；
- * @param {Function} Array[0].group 分组；group=1或不设置分组时，为默认分组，该组会有错误信息产生；group=2为额外分组，该组会接着分组1后执行，但若有错误信息时，则不会执行
+ * @param {Function} Array[0].group 分组；group=1或不设置分组时，为默认分组，该组会有错误信息产生；group=2为额外分组，该组会接着分组1后执行，但若有错误信息时，不会执行。
  * @returns {Function}
  */
-export const applyingInterceptors = (fn, interceptors = []) => {
+export const applyingInterceptors = (fn, interceptors = [], options) => {
+    options = Object.assign({}, options);
+    let { isPass } = options;
     const group1 = [];
     const group2 = [];
+    const isPassFunction = typeof isPass == 'function';
+    if (!isPassFunction) {
+        isPass = isPassForCommon;
+    }
     // 对所有的拦截器进行初始化
     for (const interceptor of interceptors) {
         if (!interceptor.group || interceptor.group == 1) {
@@ -90,9 +100,14 @@ export const applyingInterceptors = (fn, interceptors = []) => {
                 return;
             }
             result = await fn.apply(_this, args);
-            // 如果调用fn()没有出现异常，则调用_run2，即postHandle；
-            _run2(group2, args, _this);
-            _run2(group1, args, _this);
+            // 如果调用fn()没有出现异常，或者isPass()返回true，则调用_run2，即postHandle；
+            if (result && !isPass(result)) {
+                throw new Error('执行结果校验不通过；result=' + (JSON.stringify(result)));
+            }
+            else {
+                _run2(group2, args, _this);
+                _run2(group1, args, _this);
+            }
         } catch (e) {
             console.log("[applyingInterceptors]执行方法/函数出现异常：" + e.message);
             // 如果调用fn()出现异常，则调用_run3，即rollback；

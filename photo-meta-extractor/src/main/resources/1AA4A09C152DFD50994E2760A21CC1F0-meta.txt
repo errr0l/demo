@@ -1,0 +1,23 @@
+Compression Type ---> Progressive, Huffman
+Data Precision ---> 8 bits
+Image Height ---> 1920 pixels
+Image Width ---> 864 pixels
+Number of Components ---> 3
+Component 1 ---> Y component: Quantization table 0, Sampling factors 2 horiz/2 vert
+Component 2 ---> Cb component: Quantization table 1, Sampling factors 1 horiz/1 vert
+Component 3 ---> Cr component: Quantization table 1, Sampling factors 1 horiz/1 vert
+Version ---> 1.1
+Resolution Units ---> none
+X Resolution ---> 1 dot
+Y Resolution ---> 1 dot
+Thumbnail Width Pixels ---> 0
+Thumbnail Height Pixels ---> 0
+Image Width ---> 1080 pixels
+Image Height ---> 2400 pixels
+Orientation ---> Unknown (0)
+Date/Time ---> 
+White Balance ---> Unknown
+Number of Tables ---> 2 Huffman tables
+File Name ---> 1AA4A09C152DFD50994E2760A21CC1F0.jpg
+File Size ---> 154364 bytes
+File Modified Date ---> 星期四 一月 11 12:43:24 +08:00 2024

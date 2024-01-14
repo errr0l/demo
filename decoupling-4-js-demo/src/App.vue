@@ -4,29 +4,46 @@
             <div slot="header" style="text-align: center;">
                 <span>decoupling-4-js-demo</span>
             </div>
-            <el-form ref="form" label-width="auto" size="small" style="width: 80%; margin: 10px auto 0;">
-                <el-form-item label="用户名">
-                    <el-input v-model="formData.username" placeholder="请输入"></el-input>
-                </el-form-item>
-                <el-form-item label="密码">
-                    <el-input v-model="formData.password" placeholder="请输入"></el-input>
-                </el-form-item>
-                <el-form-item label="确认密码">
-                    <el-input v-model="formData.password2" placeholder="请输入"></el-input>
-                </el-form-item>
-                <el-form-item label="邮箱">
-                    <el-input v-model="formData.email" placeholder="请输入"></el-input>
-                </el-form-item>
-                <el-form-item label="验证码">
-                    <el-input v-model="formData.captcha" placeholder="请输入">
-                        <el-button slot="append" @click="sendEmailVerifyCode">{{btnText}}</el-button>
-                    </el-input>
-                </el-form-item>
-            </el-form>
-            <div style="text-align: center;">
-                <el-button type="primary" size="mini" @click="register">注册账号</el-button>
-                <el-button type="primary" size="mini" :disabled="btnDisabled" @click="onlyOneClick">只允许一次点击</el-button>
-            </div>
+            <el-tabs v-model="activeName">
+                <el-tab-pane label="用户登陆" name="first">
+                    <el-form ref="form" label-width="auto" size="small" style="width: 80%; margin: 10px auto 0;">
+                        <el-form-item label="用户名/邮箱">
+                            <el-input v-model="formData2.username" placeholder="请输入"></el-input>
+                        </el-form-item>
+                        <el-form-item label="密码">
+                            <el-input v-model="formData2.password" placeholder="请输入"></el-input>
+                        </el-form-item>
+                    </el-form>
+                    <div style="text-align: center;">
+                        <el-button type="primary" size="mini" :disabled="btnDisabled2" @click="login">登录</el-button>
+                    </div>
+                </el-tab-pane>
+                <el-tab-pane label="用户注册" name="second">
+                    <el-form ref="form" label-width="auto" size="small" style="width: 80%; margin: 10px auto 0;">
+                        <el-form-item label="用户名">
+                            <el-input v-model="formData.username" placeholder="请输入"></el-input>
+                        </el-form-item>
+                        <el-form-item label="密码">
+                            <el-input v-model="formData.password" placeholder="请输入"></el-input>
+                        </el-form-item>
+                        <el-form-item label="确认密码">
+                            <el-input v-model="formData.password2" placeholder="请输入"></el-input>
+                        </el-form-item>
+                        <el-form-item label="邮箱">
+                            <el-input v-model="formData.email" placeholder="请输入"></el-input>
+                        </el-form-item>
+                        <el-form-item label="验证码">
+                            <el-input v-model="formData.captcha" placeholder="请输入">
+                                <el-button slot="append" @click="sendEmailVerifyCode">{{btnText}}</el-button>
+                            </el-input>
+                        </el-form-item>
+                    </el-form>
+                    <div style="text-align: center;">
+                        <el-button type="primary" size="mini" @click="register">注册账号</el-button>
+                        <el-button type="primary" size="mini" :disabled="btnDisabled" @click="onlyOneClick">只允许一次点击</el-button>
+                    </div>
+                </el-tab-pane>
+            </el-tabs>
         </el-card>
     </div>
 </template>
@@ -34,7 +51,7 @@
 <script>
 import { applyingInterceptors, emailRule } from "@/util/common";
 import { CustomException } from "@/exception/CustomException";
-import { onlyOneClickInterceptor } from "./interceptor";
+import { onlyOneClickInterceptor, timeoutRollback, disabledInterceptorPreHandle } from "./interceptor";
 
 const defaultBtnText = '获取验证码';
 const CD = 60; // 一分钟
@@ -55,6 +72,19 @@ function sendEmailVerifyCode(params) {
         console.log(`${key}：${params[key]}`);
     }
     console.log('---');
+    return { code: 0 };
+}
+
+function login(params) {
+    console.log('--- 模拟登陆账号 ---');
+    for (const key in params) {
+        console.log(`${key}：${params[key]}`);
+    }
+    console.log('---');
+    // 模拟接口服务器返回错误信息；
+    if (params['username'] != 'test001' || params['password'] != '123456') {
+        return { code: 400001, message: '账号或密码错误' }
+    }
     return { code: 0 };
 }
 
@@ -119,7 +149,21 @@ const interceptors2 = [{
 }];
 
 const interceptors3 = [
-    onlyOneClickInterceptor,
+    onlyOneClickInterceptor
+];
+
+const interceptors4 = [
+    {
+        preHandle: disabledInterceptorPreHandle,
+        paramName: 'btnDisabled2',
+        // rollback: ({ args, _this, interceptor, errors }) => {
+        //     _this[interceptor.paramName] = false;
+        // }
+    },
+    {
+        group: 2, paramName: 'btnDisabled2',
+        preHandle: timeoutRollback // 在新增的拦截器中添加了一个延迟解除禁用的处理器
+    }
 ];
 
 export default {
@@ -133,14 +177,20 @@ export default {
                 email: "",
                 captcha: ""
             },
+            formData2: {
+                username: "",
+                password: ""
+            },
             btnDisabled: false,
+            btnDisabled2: false,
             btnText: defaultBtnText,
-            cd: CD
+            cd: CD, activeName: 'first'
         };
     },
     created() {
         sendEmailVerifyCode = applyingInterceptors(sendEmailVerifyCode, interceptors2).bind(this);
         this.onlyOneClick = applyingInterceptors(this.onlyOneClick, interceptors3).bind(this);
+        this.login = applyingInterceptors(this.login, interceptors4).bind(this);
     },
     methods: {
         async register() {
@@ -175,6 +225,16 @@ export default {
         // 如在某些场景下，防止用户多次提交表单
         onlyOneClick() {
             window.alert("该按钮只允许点击一次");
+        },
+        async login() {
+            const resp = await login(this.formData2);
+            if (resp && resp.code == 0) {
+                this.$message.success("登陆成功");
+            }
+            else {
+                this.$message.error(resp.message || '登陆失败');
+            }
+            return resp;
         }
     }
 };

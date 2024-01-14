@@ -177,8 +177,8 @@ service.interceptors.response.use(
     },
     error => {
         console.error('请求过程中发生错误：', error);
-        // 如果有相应，就交给respHandler函数处理
-        if (error.response) {
+        // 如果有响应（由接口服务器返回），就交给respHandler函数处理
+        if (error.response && error.response.data && error.response.data.code) {
             return respHandler(error.response);
         }
 
@@ -197,6 +197,7 @@ service.interceptors.response.use(
             release(false);
         }
 
+        // 可以选择跳到错误页面；（如error.vue）
         _Message.error(error.message || "系统发生异常");
 
         console.error('错误处理失败.');

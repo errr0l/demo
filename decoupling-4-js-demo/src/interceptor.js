@@ -1,5 +1,5 @@
 // 【按钮】禁用拦截器前置处理
-const disabledInterceptorPreHandle = ({ args, _this, interceptor, errors }) => {
+export const disabledInterceptorPreHandle = ({ args, _this, interceptor, errors }) => {
     const { paramName } = interceptor;
     if (_this[paramName]) {
         return 0;
@@ -19,6 +19,22 @@ export const onlyOneClickInterceptor = {
     paramName: 'btnDisabled',
     preHandle: disabledInterceptorPreHandle,
     rollback: onlyOneClickInterceptorRollback
+};
+
+// 一般通用的isPass方法
+export const isPassForCommon = (resp) => {
+    if (resp && resp.code == 0) {
+        return true;
+    }
+    return false;
+}
+
+// 用于恢复禁用状态；
+export const timeoutRollback = ({ args, _this, interceptor, errors }) => {
+    const { paramName, timeout } = interceptor;
+    setTimeout(() => {
+        _this[paramName] = false;
+    }, timeout || 2000);
 };
 
 // 如果有多个需要禁用，则再进行拓展；
