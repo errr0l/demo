@@ -1,6 +1,8 @@
 # TreeMaker-demo
 
-一个由java编写、用于生成树形结构数据的实用小工具，不仅使用简单，还很通用，可以有效消除重复的模板代码，使得项目更加清爽简洁易于维护。
+一个由java编写、用于生成树形结构数据的实用小工具，简单&通用，可以有效消除重复的模板代码，使得项目更加清爽简洁易于维护。
+
+[点击查看详情](https://xxzhiwei.github.io/github-pages/articles/35.html)
 
 ## 编译源文件
 以下命令在终端操作，其中需要额外注意的是，"-classpath"后面的参数是"点"和"冒号"。
@@ -9,7 +11,7 @@
 javac -classpath .:lib/fastjson-1.2.33.jar -d output src/com/treemaker/demo/*.java
 ```
 
-## 执行class
+## 测试代码
 与编译源文件有所区别的是，在执行class文件的时候，需要把盘符切换到class文件的上一级目录，否则会报"找不到或无法加载主类"的错误。
 
 ```base

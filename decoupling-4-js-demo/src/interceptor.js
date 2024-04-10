@@ -32,6 +32,7 @@ export const isPassForCommon = (resp) => {
 // 用于恢复禁用状态；
 export const timeoutRollback = ({ args, _this, interceptor, errors }) => {
     const { paramName, timeout } = interceptor;
+    console.log(paramName, timeout)
     setTimeout(() => {
         _this[paramName] = false;
     }, timeout || 2000);
