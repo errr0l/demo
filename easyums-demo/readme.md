@@ -134,7 +134,7 @@ npm i
 # 赋予权限
 chmod u+x bin/www
 
-bin/www
+npm run dev
 ```
 
 3、以上步骤完成后，在浏览器打开web端
