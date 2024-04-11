@@ -43,11 +43,16 @@ export default {
         if (error) {
             this.dialogVisible = true;
             this.description = error_description;
+            return;
         }
-        else if (code) {
-            this.code = code;
-            this.loginByCode(code);
+        if (!code) {
+            this.dialogVisible = true;
+            this.description = "授权码不能为空";
+            return;
         }
+
+        this.code = code;
+        this.loginByCode(code);
     },
     methods: {
         async loginByCode(code) {

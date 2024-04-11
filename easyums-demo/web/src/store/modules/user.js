@@ -1,4 +1,4 @@
-import { resetRouter } from "@/router";
+// import { resetRouter } from "@/router";
 import { getPrefixForStorage } from "@/utils/common";
 
 const { VUE_APP_PREFIX = "" } = process.env;
@@ -47,10 +47,6 @@ const mutations = {
         const { accessToken } = payload;
         state.accessToken = accessToken;
         localStorage.setItem(getKey('accessToken'), accessToken);
-    },
-    SET_USER_AVATAR(state, avatar) {
-        state.user.avatar = avatar;
-        localStorage.setItem(getKey('user'), JSON.stringify(state.user));
     }
 };
 
@@ -60,19 +56,6 @@ const actions = {
         commit("SET_USER", { user });
         commit("SET_ACCESS_TOKEN", { accessToken });
         commit("SET_REFRESH_TOKEN", { refreshToken });
-    },
-    logout({ commit }) {
-        resetRouter();
-        commit("SET_USER", { user: user });
-        commit("SET_ACCESS_TOKEN", { accessToken: "" });
-        commit("SET_REFRESH_TOKEN", { refreshToken: "" });
-        commit("permission/setRoutes", { routes: [] }, { root: true });
-    },
-    saveAccountInfo({ commit }, payload) {
-        commit("SET_USER", payload);
-    },
-    saveAccountAvatar({ commit }, { avatar }) {
-        commit("SET_USER_AVATAR", avatar);
     }
 };
 

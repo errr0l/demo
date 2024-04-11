@@ -37,16 +37,6 @@ const service = axios.create({
     // enableRetrying: true // 是否启用重试
 });
 
-// function release(ok) {
-//     if (queue.length) {
-//         for (const handler of queue) {
-//             handler(ok);
-//         }
-//         // 释放队列
-//         queue.length = 0;
-//     }
-// }
-
 /**
  * 通知方法
  * @param {Number} type - 通知类型；1=gotoLoginPage，2=Message.error
@@ -96,69 +86,6 @@ async function respHandler(resp) {
     if (data.error) {
         notice(2, resp);
     }
-    // switch (data.code) {
-    //     case 0:
-    //         return data;
-    //     // 未登录或accessToken过期
-    //     case 40101:
-    //         const refreshToken = window.localStorage.getItem("refreshToken");
-    //         if (!refreshToken) {
-    //             //MessageBox("请先登录", "提示", { confirmButtonText: '确定' }).then(() => {});
-    //             notice(1, resp);
-    //             // 修改为break，否则可能导致queue中的请求不会释放的问题
-    //             break;
-    //         }
-    //         if (!retrying) {
-    //             retrying = true;
-    //             try {
-    //                 const refreshResp = await refresh({ refreshToken });
-    //                 if (!refreshResp || refreshResp.code !== 0) {
-    //                     throw new Error('刷新失败');
-    //                 }
-    //                 const { accessToken, refreshToken: _new } = refreshResp.data;
-    //                 window.localStorage.setItem("accessToken", accessToken);
-    //                 if (_new) {
-    //                     window.localStorage.setItem("refreshToken", _new);
-    //                 }
-    //                 bus.$emit('refresh:token', { accessToken, refreshToken: _new });
-    //                 release(true);
-    //                 return service(resp.config);
-    //             } catch (error) {
-    //                 // 如果刷新过程中出现错误的话，就直接返回，后续不在发起请求
-    //                 // 捕获到的error有两种可能：1）refresh请求时发生的异常；2）上面抛出的Error
-    //                 console.error("刷新请求出现错误：", error);
-    //                 window.localStorage.setItem("accessToken", "");
-    //                 bus.$emit('clear:token', { accessToken: true });
-    //             } finally {
-    //                 retrying = false;
-    //             }
-    //         }
-    //         // 在多个连续请求的情况下，将请求加入队列
-    //         else {
-    //             return new Promise((resolve, reject) => {
-    //                 queue.push((ok) => {
-    //                     // 刷新成功成功后，重新发起请求
-    //                     if (ok) {
-    //                         resolve(service(resp.config));
-    //                     }
-    //                     else {
-    //                         reject('refreshing failure.');
-    //                     }
-    //                 });
-    //             });
-    //         }
-    //         break;
-    //     case 40198:
-    //         window.localStorage.setItem("refreshToken", "");
-    //         bus.$emit('clear:token', { refreshToken: true });
-    //         // _Message.error(data.message || "请重新登陆");
-    //         notice(1, resp);
-    //         break;
-    //     default:
-    //        //  _Message.error(data.message || "系统发生异常");
-    //        notice(2, resp);
-    // }
-    // release(false);
     return data;
 }
 
@@ -184,21 +111,6 @@ service.interceptors.response.use(
         if (error.response && error.response.data && error.response.data.code) {
             return respHandler(error.response);
         }
-
-        // 可以拓展更多的需要重发请求的情况
-        // if (error.config.enableRetrying && (error.code === 'ECONNABORTED' || error.message.includes('timeout of'))) {
-        //     if (error.config.retryingCount > 0) {
-        //         error.config.retryingCount--;
-        //         let current = Math.abs(error.config.retryingCount - maxRetryingCount);
-        //         console.warn("第" + current + "次重发中...");
-        //         if (error.config.configHandler && typeof error.config.configHandler === 'function') {
-        //             error.config.configHandler();
-        //         }
-        //         return service(error.config);
-        //     }
-        //     console.error("[" + error.config.url + "] 请求失败，总次数为：" + maxRetryingCount);
-        //     release(false);
-        // }
 
         // 可以选择跳到错误页面；（如error.vue）
         _Message.error(error.message || "系统发生异常");

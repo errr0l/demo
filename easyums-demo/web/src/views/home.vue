@@ -3,12 +3,10 @@
         <div style="margin-bottom: 30px;">
             <span>easyums-demo</span>
         </div>
+        <div></div>
         <div v-if="signed">
             <div style="margin-bottom: 10px;">{{ user.username }}</div>
             <ul>
-                <li style="margin-bottom: 10px;">
-                    <el-button type="text" @click="$router.push('/login')">前往登陆</el-button>
-                </li>
                 <li style="margin-bottom: 10px;">
                     <el-button type="text" @click="test1">测试接口1[不携带访问令牌]</el-button>
                 </li>
@@ -18,7 +16,10 @@
             </ul>
         </div>
         <div v-else>
-            <el-button plain size="mini" @click="$router.push('/login')">你好，请登陆</el-button>
+            你好，请登陆
+        </div>
+        <div>
+            <el-button type="text" @click="$router.push('/login')">前往登陆</el-button>
         </div>
     </div>
 </template>
