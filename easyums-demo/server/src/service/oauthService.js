@@ -2,21 +2,23 @@ const axios = require("axios");
 const base64js = require("base64-js");
 const jwt = require("jsonwebtoken");
 const fs = require("fs");
-const path = require("path");
 const { pool } = require("../config/dbHelper");
+const appConfig = require("../config/appConfig");
 
 let publicKey = "";
 
-const clientId = 2;
-const clientSecret = "easyums@demo1";
-const rootDir = path.resolve(process.cwd());
+const clientId = appConfig.oauth.client.id;
+const clientSecret = appConfig.oauth.client.secret;
+const redirectUri = appConfig.oauth.client.redirect_uri;
+
+const oauthHost = appConfig.oauth.server.host;
 
 async function getToken(code) {
     const joined = `${clientId}:${clientSecret}`;
     const encoded = new TextEncoder().encode(joined);
     const resp = await axios({
         method: "post",
-        baseURL: "http://127.0.0.1:8084",
+        baseURL: oauthHost,
         url: "/oauth2/token",
         headers: {
             'Authorization': 'Basic ' + base64js.fromByteArray(encoded)
@@ -25,7 +27,7 @@ async function getToken(code) {
             grant_type: "authorization_type",
             code: code,
             client_id: clientId,
-            redirect_uri: 'http://localhost:8887/#/oauth2/callback'
+            redirect_uri: redirectUri,
         }
     });
     return resp.data;
@@ -33,7 +35,7 @@ async function getToken(code) {
 
 function decrypt(idToken) {
     if (!publicKey) {
-        publicKey = fs.readFileSync(rootDir + "/rsa_public_key.pem", { encoding: 'utf-8' });
+        publicKey = fs.readFileSync(appConfig.jwt.rsa_public_key, { encoding: 'utf-8' });
     }
     return jwt.verify(idToken, publicKey);
 }

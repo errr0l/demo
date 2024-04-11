@@ -10,9 +10,9 @@ const tokenService = require("./service/tokenService");
 const userService = require("./service/userService");
 const { userStore } = require('./store');
 const { secret } = require("./util/tokenUtil");
+const appConfig = require("./config/appConfig");
 
 const whiteList = ["/oauth/login", "/oauth/register"];
-
 
 let status_401 = 401;
 let body_401 = { error: "logging_required", message: '未登录' };
@@ -117,7 +117,7 @@ app.use(errorHandler);
 app.use(oauthRouter.routes());
 app.use(testRouter.routes());
 
-const server = app.listen(8088, function () {
+const server = app.listen(appConfig.server.port, function () {
     let host = server.address().address;
     const port = server.address().port;
     if (host === "::") {

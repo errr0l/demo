@@ -57,6 +57,15 @@
 </template>
 
 <script>
+// 授权地址
+const HOST = "http://localhost:8084/oauth2/authorize";
+// 客户端id
+const CLIENT_ID = 2;
+// 客户端回调
+const REDIRECT_URI = "http://localhost:8887/#/oauth2/callback";
+// 权限范围
+const SCOPE = "openid profile email";
+
 export default {
     name: "Login",
     data() {
@@ -87,8 +96,9 @@ export default {
         login() {},
         async getCaptcha() {},
         authorize() {
-            const redirectUrl = encodeURIComponent('http://localhost:8887/#/oauth2/callback');
-            const authorizationUrl = encodeURI(`http://localhost:8084/oauth2/authorize?redirect_uri=${redirectUrl}&client_id=2&response_type=code&state=1&scope=openid profile email`);
+            const encoded = encodeURIComponent(REDIRECT_URI);
+            const state = Math.floor(Math.random() * 100);
+            const authorizationUrl = encodeURI(`${HOST}?redirect_uri=${encoded}&client_id=${CLIENT_ID}&response_type=code&state=${state}&scope=${SCOPE}`);
             location.href = authorizationUrl;
         }
     },

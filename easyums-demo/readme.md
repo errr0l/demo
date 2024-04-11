@@ -4,100 +4,33 @@ easyums授权系统对接示例。
 
 ## 启动
 
-1、easyums
+### 一、启动easyums
 
-当前示例代码需要依赖[easyums](https://github.com/xxzhiwei/easyums)，启动easyums后，将数据库中的客户端id、密钥、回调地址拷贝到指定位置（按需注册客户端）。
-
-如有疑惑，请先查看easyums的项目说明。
+如有疑惑，请先查看[easyums](https://github.com/xxzhiwei/easyums)的项目说明。
 
 > https://github.com/xxzhiwei/easyums
 
-1.1、拷贝至easyums-demo/server
+### 二、启动easyums-demo
 
-以下代码是在同一文件中。
+本系统又分为前后端两个部分。
 
-1）id&secret
-
-> server/src/service/oauthService.js
-
-```js
-// ...
-const clientId = 2;
-const clientSecret = "easyums@demo1";
-// ...
-```
-
-2）回调地址
-
-> server/src/service/oauthService.js
-
-```js
-const resp = await axios({
-    // ...
-    data: {
-        grant_type: "authorization_type",
-        code: code,
-        client_id: clientId,
-        redirect_uri: 'http://localhost:8887/#/oauth2/callback'
-    }
-});
-```
-
-1.2、拷贝至easyums-demo/web
-
-只需要客户端id，以下代码是在同一文件中。
-
-1）id&secret
-
-> web/src/views/login.vue
-
-```js
-// ...
-const authorizationUrl = encodeURI(`http://localhost:8084/oauth2/authorize?redirect_uri=${redirectUrl}&client_id=2&response_type=code&state=1&scope=openid profile email`);
-// ..
-```
-
-2）回调地址
-
-> web/src/views/login.vue
-
-```js
-// ..
-const redirectUrl = encodeURIComponent('http://localhost:8887/#/oauth2/callback');
-// ..
-```
-
-（事实上集成在一个配置文件中更合适）
-
-2、easyums-demo
-
-本系统又分为前后端两个部分，需要分别进行启动。
-
-2.1、web
+#### 1、web
 
 web端主要包含了三个页面，分别为登陆、注册、home。
 
-![image](./894dfd4a7de484b1f51b0cd15f734ad5.png)
+![image](./web/static/images/6d206c65fd6d3305eadd8f3f7258fe6b.png)
 
-*图1 用户登陆*
+*图1 主页（未登录）*
 
-![image](./08e430d00c2e483ea423d33e4476c775.png)
+![image](./web/static/images/1554c1b7f2d6477a732700792ee5d1ba.png)
 
-*图2 用户注册*
-
-![image](./6d206c65fd6d3305eadd8f3f7258fe6b.png)
-
-*图3 主页（未登录）*
-
-![image](./1554c1b7f2d6477a732700792ee5d1ba.png)
-
-*图4 主页（已登录）*
+*图2 主页（已登录）*
 
 在当前，使用该网页的目的是为了成功调用home页面中的"/test/1"接口，如下所示：
 
-![image](./FEDB704856786CDDC698A9D8AE8004B9.png)
+![image](./web/static/images/FEDB704856786CDDC698A9D8AE8004B9.png)
 
-*图5 测试接口2*
+*图3 测试接口2*
 
 点击该按钮，并得到"ok"的提示字样时，表示调用成功。
 
@@ -113,6 +46,23 @@ web端主要包含了三个页面，分别为登陆、注册、home。
 
 oauth的统一登陆（或者也可以说是单点登录）就是靠这个关联关系实现的。
 
+1）配置客户端与授权服务器信息
+
+> web/src/views/login.vue
+
+```js
+// 授权地址
+const HOST = "http://localhost:8084/oauth2/authorize";
+// 客户端id
+const CLIENT_ID = 2;
+// 客户端回调
+const REDIRECT_URI = "http://localhost:8887/#/oauth2/callback";
+// 权限范围
+const SCOPE = "openid profile email";
+```
+
+2）执行启动命令
+
 ```bash
 cd web
 
@@ -122,9 +72,50 @@ npm i
 npm run dev
 ```
 
-2.2、server
+#### 3、server
 
-创建数据库，并执行"server/demo1.sql"文件后，根据自己的情况修改数据库连接配置信息"server/src/config/dbHelper.js"，最后终端执行以下命令启动服务端。
+1）创建数据库，并执行sql语句。
+
+> server/demo1.sql
+
+数据库名可与sql文件同名；自定义时，配置文件中的数据库信息需要同步修改。
+
+2）修改配置文件
+
+> server/app.ini
+
+其中web和server中的客户端信息必须保持一致，否则会导致授权失败；另外rsa_public_key由easyums中的js脚本生成后拷贝给客户端server，详情查看[easyums文档](https://github.com/xxzhiwei/easyums)。
+
+```ini
+[server]
+port=8088
+
+# mysql配置
+[database]
+host=localhost
+port=3306
+user=root
+password=
+db_name=demo1
+
+# oauth客户端配置
+[oauth.client]
+id=2
+secret=easyums@demo1
+redirect_uri=http://localhost:8887/#/oauth2/callback
+
+# oauth授权服务器配置
+[oauth.server]
+# 主机地址
+host=http://127.0.0.1:8084
+
+# jwt配置
+[jwt]
+# 公钥路径
+rsa_public_key=/your/path/rsa_public_key.pem
+```
+
+3）执行启动命令
 
 ```bash
 cd server
@@ -137,6 +128,6 @@ chmod u+x bin/www
 bin/www
 ```
 
-3、以上步骤完成后，在浏览器打开web端
+### 三、在浏览器打开以下地址
 
 > http://localhost:8887
