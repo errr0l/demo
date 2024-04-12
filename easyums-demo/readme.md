@@ -125,7 +125,7 @@ npm i
 # 赋予权限
 chmod u+x bin/www
 
-bin/www
+npm run dev
 ```
 
 ### 三、在浏览器打开以下地址
