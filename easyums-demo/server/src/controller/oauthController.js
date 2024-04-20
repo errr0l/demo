@@ -26,11 +26,12 @@ router.post("/register", async (ctx) => {
         email, date: new Date()
     };
     const id = await userService.save(user);
-    oauth.userId = id;
+    oauth.user_id = id;
     // 保存oauth记录
     await oauthService.save(oauth);
     user.id = id;
     const loginInfo = await userService.login2(user);
+    oauthStore.save(id, oauth);
     ctx.body = { error: '', message: '', payload: loginInfo };
 });
 
@@ -45,7 +46,7 @@ router.post("/login", async (ctx) => {
             return;
         }
         const payload = tokenResp.payload;
-        const idToken = payload['id_token'];
+        const idToken = payload['id_token']; // id_token也应该保存起来
         const decrypted = oauthService.decrypt(idToken);
         // 查询记录
         const oauth = await oauthService.selectOauthByOpenid(decrypted.openid);
@@ -57,10 +58,14 @@ router.post("/login", async (ctx) => {
                 refreshToken: ""
             };
             // 临时保存oauth记录
-            oauthStore.save(code, { clientId: decrypted.client_id, openid: decrypted.openid, accessToken: payload.access_token, refreshToken: payload.refresh_token });
+            oauthStore.save(code, { client_id: decrypted.client_id, openid: decrypted.openid, access_token: payload.access_token, refresh_token: payload.refresh_token });
         }
         else {
+            oauth.access_token = payload.access_token;
+            oauth.refresh_token = payload.refresh_token;
             respData.payload = await userService.login(oauth);
+            oauthStore.save(oauth.user_id, oauth);
+            await oauthService.update(oauth);
         }
     } catch (error) {
         console.log(error);

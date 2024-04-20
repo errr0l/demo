@@ -13,6 +13,15 @@
                 <li>
                     <el-button type="text" @click="test2">测试接口2[携带访问令牌]</el-button>
                 </li>
+                <li>
+                    <el-button type="text" @click="testGettingUserInfo">测试获取[授权服务器]用户信息</el-button>
+                </li>
+                <li>
+                    <el-button type="text" @click="testRevoking">测试取消[授权服务器]授权</el-button>
+                </li>
+                <li>
+                    <el-button type="text" @click="testRefreshing">测试刷新[授权服务器]令牌</el-button>
+                </li>
             </ul>
         </div>
         <div v-else>
@@ -77,7 +86,93 @@ export default {
                 }
                 this.$message.error(error.message || "未知错误");
             }
-        }
+        },
+        // 测试获取用户信息
+        async testGettingUserInfo() {
+            const accessToken = window.localStorage.getItem("accessToken");
+            try {
+                const resp = await axios({
+                    baseURL: "http://localhost:8088",
+                    url: "/test/userinfo",
+                    method: 'get',
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`
+                    }
+                });
+
+                const respData = resp.data;
+                if (respData.error) {
+                    this.$message.error("操作失败");
+                }
+                else {
+                    this.$message.success("操作成功");
+                }
+            } catch (error) {
+                if (error instanceof AxiosError) {
+                    const data = error.response.data;
+                    this.$message.error(data.message || data.error || "未知错误");
+                    return;
+                }
+                this.$message.error(error.message || "未知错误");
+            }
+        },
+        // 测试取消授权
+        async testRevoking() {
+            const accessToken = window.localStorage.getItem("accessToken");
+            try {
+                const resp = await axios({
+                    baseURL: "http://localhost:8088",
+                    url: "/test/revoke",
+                    method: 'post',
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`
+                    }
+                });
+                const respData = resp.data;
+                if (respData.error) {
+                    this.$message.error("操作失败");
+                }
+                else {
+                    this.$message.success("操作成功");
+                }
+            } catch (error) {
+                if (error instanceof AxiosError) {
+                    const data = error.response.data;
+                    this.$message.error(data.message || "未知错误");
+                    return;
+                }
+                this.$message.error(error.message || "未知错误");
+            }
+        },
+        // 测试刷新令牌
+        // 查看控制台
+        async testRefreshing() {
+            const accessToken = window.localStorage.getItem("accessToken");
+            try {
+                const resp = await axios({
+                    baseURL: "http://localhost:8088",
+                    url: "/test/refresh",
+                    method: 'post',
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`
+                    }
+                });
+                const respData = resp.data;
+                if (respData.error) {
+                    this.$message.error("操作失败");
+                }
+                else {
+                    this.$message.success("操作成功");
+                }
+            } catch (error) {
+                if (error instanceof AxiosError) {
+                    const data = error.response.data;
+                    this.$message.error(data.message || "未知错误");
+                    return;
+                }
+                this.$message.error(error.message || "未知错误");
+            }
+        },
     }
 };
 </script>
