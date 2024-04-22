@@ -1,16 +1,16 @@
-# EASYUMS-DEMO
+# Your Approval Demo
 
-easyums授权系统对接示例。
+your-approval授权系统对接示例。
 
 ## 启动
 
-### 一、启动easyums
+### 一、启动your-approval
 
-如有疑惑，请先查看[easyums](https://github.com/xxzhiwei/easyums)的项目说明。
+如有疑惑，请先查看[your-approval](https://github.com/xxzhiwei/your-approval)的项目说明。
 
-> https://github.com/xxzhiwei/easyums
+> https://github.com/xxzhiwei/your-approval
 
-### 二、启动easyums-demo
+### 二、启动your-approval-demo
 
 本系统又分为前后端两个部分。
 
@@ -38,9 +38,9 @@ web端主要包含了三个页面，分别为登陆、注册、home。
 
 该流程可以简单概括为：
 
-> easyums-demo -> 跳转 -> easyums -> 认证(按需注册) -> 跳转 -> easyums-demo -> (按需注册) -> 授权登录成功
+> your-approval-demo -> 跳转 -> your-approval -> 认证(按需注册) -> 跳转 -> your-approval-demo -> (按需注册) -> 授权登录成功
 
-在上述的流程中，对于首次使用系统的用户来说，需要分别在easyums和easyums-demo系统中注册账号，即除了oauth授权服务器之外，第三方应用也有自己的用户体系，而不是赖于授权服务器。
+在上述的流程中，对于首次使用系统的用户来说，需要分别在your-approval和your-approval-demo系统中注册账号，即除了oauth授权服务器之外，第三方应用也有自己的用户体系，而不是赖于授权服务器。
 
 > 第三方应用只是从授权服务器中获取了用户的数据，并为用户在自己的系统上注册了一个账号，该账号与授权服务器的账号关联。
 
@@ -84,7 +84,7 @@ npm run dev
 
 > server/app.ini
 
-其中web和server中的客户端信息必须保持一致，否则会导致授权失败；另外rsa_public_key由easyums中的js脚本生成后拷贝给客户端server，详情查看[easyums文档](https://github.com/xxzhiwei/easyums)。
+其中web和server中的客户端信息必须保持一致，否则会导致授权失败；另外rsa_public_key由your-approval中的js脚本生成后拷贝给客户端server，详情查看[your-approval文档](https://github.com/xxzhiwei/your-approval)。
 
 ```ini
 [server]
@@ -101,7 +101,7 @@ db_name=demo1
 # oauth客户端配置
 [oauth.client]
 id=2
-secret=easyums@demo1
+secret=your-approval@demo1
 redirect_uri=http://localhost:8887/#/oauth2/callback
 
 # oauth授权服务器配置

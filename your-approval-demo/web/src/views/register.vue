@@ -6,7 +6,7 @@
             <div class="right">
                 <div class="content">
                     <div class="item logo mg-b-10">
-                        <h2 class="unselectable">easyums-demo</h2>
+                        <h2 class="unselectable">your-approval-demo</h2>
                     </div>
                     <h2 class="item greeting mg-b-10 unselectable">
                         <span style="font-size: 20px;">REGISTRATION</span>

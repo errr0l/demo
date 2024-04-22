@@ -1,7 +1,7 @@
 <template>
     <div id="app" class="container">
         <div style="margin-bottom: 30px;">
-            <span>easyums-demo</span>
+            <span>your-approval-demo</span>
         </div>
         <div></div>
         <div v-if="signed">

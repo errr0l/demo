@@ -35,7 +35,7 @@ function generateToken(payload) {
     // 标出类型，以防止使用refresh_token当做access_token使用的问题
     payload['type'] = "access_token";
     const opts = {
-        issuer: "easyums demo",
+        issuer: "your approval demo",
         expiresIn: "2h",
     };
     return generate(payload, secret, opts);
@@ -44,7 +44,7 @@ function generateToken(payload) {
 function generateRefreshToken(payload={}) {
     payload['type'] = "refresh_token";
     const opts = {
-        issuer: "easyums demo",
+        issuer: "your approval demo",
         expiresIn: "7d",
     };
     return generate(payload, secret, opts);
