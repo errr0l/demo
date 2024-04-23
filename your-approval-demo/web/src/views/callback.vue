@@ -42,6 +42,7 @@ export default {
         const { error, error_description, code } = this.$route.query;
         if (error) {
             this.dialogVisible = true;
+            this.error = error;
             this.description = error_description;
             return;
         }
