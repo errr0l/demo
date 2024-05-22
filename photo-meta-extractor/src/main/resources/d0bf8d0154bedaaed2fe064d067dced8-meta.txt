@@ -1,0 +1,42 @@
+Compression Type ---> Baseline
+Data Precision ---> 8 bits
+Image Height ---> 1920 pixels
+Image Width ---> 864 pixels
+Number of Components ---> 3
+Component 1 ---> Y component: Quantization table 0, Sampling factors 2 horiz/2 vert
+Component 2 ---> Cb component: Quantization table 1, Sampling factors 1 horiz/1 vert
+Component 3 ---> Cr component: Quantization table 1, Sampling factors 1 horiz/1 vert
+Version ---> 1.1
+Resolution Units ---> none
+X Resolution ---> 1 dot
+Y Resolution ---> 1 dot
+Thumbnail Width Pixels ---> 0
+Thumbnail Height Pixels ---> 0
+Image Width ---> 1260 pixels
+Image Height ---> 2800 pixels
+Orientation ---> Unknown (0)
+Date/Time ---> 
+White Balance ---> Unknown
+Profile Size ---> 520
+Version ---> 4.3.0
+Class ---> Display Device
+Color space ---> RGB 
+Profile Connection Space ---> XYZ 
+Profile Date/Time ---> 2016:01:01 00:00:00
+Signature ---> acsp
+Rendering Intent ---> Media-Relative Colorimetric
+XYZ values ---> 0.964 1 0.825
+Tag Count ---> 9
+Profile Description ---> 1 enUS(Display P3 Gamut with sRGB Transfer)
+Red Colorant ---> (0.5151, 0.2412, 65536)
+Green Colorant ---> (0.292, 0.6922, 0.0419)
+Blue Colorant ---> (0.1572, 0.0666, 0.7843)
+Media White Point ---> (0.9642, 1, 0.8249)
+Red TRC ---> para (0x70617261): 40 bytes
+Green TRC ---> para (0x70617261): 40 bytes
+Blue TRC ---> para (0x70617261): 40 bytes
+Profile Copyright ---> 1 enUS(Google Inc. 2016)
+Number of Tables ---> 4 Huffman tables
+File Name ---> d0bf8d0154bedaaed2fe064d067dced8.jpg
+File Size ---> 81856 bytes
+File Modified Date ---> 星期日 五月 19 09:01:53 +08:00 2024
