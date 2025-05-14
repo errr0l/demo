@@ -1,0 +1,8 @@
+# 需要下载获取资源的推文url
+tweet_url=https://x.com/mitadms/status/1922097619347636323
+# 在请求某些敏感资源时，需要用到，推文分为两种，一种是游客可查看，另一种要求认证；
+# 登录推特网页版后，打开浏览器控制台，将其复制；
+# 以chrome为例，在控制台中运行指令"copy(document.cookie)"，其中，ct0为csrf-token；
+# 另外，字段auth_token带有"httpOnly"标识，无法通过document.cookie输出，所以需要单独复制，并加入整段cookie字符串中
+cookie=<你的cookie>
+user_agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36
