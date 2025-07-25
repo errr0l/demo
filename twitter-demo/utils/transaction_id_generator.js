@@ -215,7 +215,6 @@ async function generateTransactionId(html, method, url, opts = {}) {
         [3]
     );
     // 添加oo的时机为，将加密字符转为数组后
-
     const uint8array = new Uint8Array(d4).map(TW);
     return Buffer.from(uint8array.buffer, uint8array.byteOffset, uint8array.byteLength).toString('base64').replace(/=/g, "");
 }
