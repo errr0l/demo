@@ -82,7 +82,7 @@ async function getTweet(config) {
         fs.writeFileSync(path.resolve(__dirname, `./output/${tweetId}.json`), JSON.stringify(respData));
     }
     else {
-        console.logg("获取失败");
+        console.log("获取失败");
     }
 }
 
